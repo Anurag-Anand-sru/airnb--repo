@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Airbnb Clone - Enhanced</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --airbnb-red: #FF385C;
+            --airbnb-dark: #222222;
+            --airbnb-gray: #717171;
+            --airbnb-light-gray: #EBEBEB;
+            --airbnb-white: #FFFFFF;
+            --airbnb-black: #000000;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Circular', -apple-system, BlinkMacSystemFont, Roboto, 'Helvetica Neue', sans-serif;
+        }
+        
+        body {
+            color: var(--airbnb-dark);
+            background-color: var(--airbnb-white);
+        }
+        
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 16px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            background-color: var(--airbnb-white);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+        }
+        
+        .logo {
+            height: 32px;
+            fill: var(--airbnb-red);
+        }
+        
+        .search-bar {
+            display: flex;
+            align-items: center;
+            border: 1px solid var(--airbnb-light-gray);
+            border-radius: 40px;
+            padding: 8px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+            transition: box-shadow 0.2s ease;
+        }
+        
+        .search-bar:hover {
+            box-shadow: 0 2px 4px rgba(0,0,0,0.18);
+        }
+        
+        .search-item {
+            padding: 10px 16px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        
+        .search-divider {
+            width: 1px;
+            height: 24px;
+            background-color: var(--airbnb-light-gray);
+        }
+        
+        .search-icon {
+            background-color: var(--airbnb-red);
+            color: var(--airbnb-white);
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 8px;
+        }
+        
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .host-button {
+            padding: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        
+        .host-button:hover {
+            background-color: var(--airbnb-light-gray);
+            border-radius: 22px;
+        }
+        
+        .language-button {
+            padding: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        
+        .profile-button {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 5px 5px 5px 12px;
+            border: 1px solid var(--airbnb-light-gray);
+            border-radius: 21px;
+            cursor: pointer;
+        }
+        
+        .profile-button:hover {
+            box-shadow: 0 2px 4px rgba(0,0,0,0.18);
+        }
+        
+        .profile-icon {
+            background-color: var(--airbnb-gray);
+            color: var(--airbnb-white);
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+        
+        /* Categories */
+        .categories {
+            padding: 20px 40px;
+            margin-top: 80px;
+            display: flex;
+            gap: 32px;
+            overflow-x: auto;
+            scrollbar-width: none;
+            border-bottom: 1px solid var(--airbnb-light-gray);
+        }
+        
+        .categories::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .category-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            padding-bottom: 16px;
+            cursor: pointer;
+            min-width: 80px;
+        }
+        
+        .category-icon {
+            font-size: 24px;
+            color: var(--airbnb-gray);
+        }
+        
+        .category-name {
+            font-size: 12px;
+            color: var(--airbnb-gray);
+            white-space: nowrap;
+        }
+        
+        .category-item.active .category-icon,
+        .category-item.active .category-name {
+            color: var(--airbnb-black);
+        }
+        
+        .category-item.active {
+            border-bottom: 2px solid var(--airbnb-black);
+        }
+        
+        /* Listings */
+        .listings {
+            padding: 40px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 24px;
+        }
+        
+        .listing-card {
+            cursor: pointer;
+        }
+        
+        .listing-image {
+            width: 100%;
+            height: 300px;
+            border-radius: 12px;
+            object-fit: cover;
+            margin-bottom: 12px;
+        }
+        
+        .listing-details {
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .listing-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .listing-distance {
+            color: var(--airbnb-gray);
+            margin-bottom: 4px;
+        }
+        
+        .listing-dates {
+            color: var(--airbnb-gray);
+            margin-bottom: 4px;
+        }
+        
+        .listing-price {
+            font-weight: 600;
+        }
+        
+        .listing-rating {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .star-icon {
+            color: var(--airbnb-red);
+            font-size: 12px;
+        }
+        
+        /* New Features */
+        /* AI Travel Planner */
+        .planner-button {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background-color: var(--airbnb-red);
+            color: var(--airbnb-white);
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            z-index: 90;
+        }
+        
+        .planner-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 200;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .planner-container {
+            background-color: var(--airbnb-white);
+            border-radius: 16px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .planner-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--airbnb-light-gray);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .planner-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .planner-close {
+            font-size: 24px;
+            cursor: pointer;
+        }
+        
+        .planner-content {
+            padding: 20px;
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+        
+        .planner-message {
+            background-color: var(--airbnb-light-gray);
+            padding: 12px 16px;
+            border-radius: 18px;
+            margin-bottom: 12px;
+            max-width: 80%;
+        }
+        
+        .planner-message.user {
+            background-color: var(--airbnb-red);
+            color: var(--airbnb-white);
+            margin-left: auto;
+        }
+        
+        .planner-input {
+            display: flex;
+            padding: 20px;
+            border-top: 1px solid var(--airbnb-light-gray);
+        }
+        
+        .planner-input-field {
+            flex-grow: 1;
+            padding: 12px 16px;
+            border: 1px solid var(--airbnb-light-gray);
+            border-radius: 24px;
+            outline: none;
+        }
+        
+        .planner-send {
+            background-color: var(--airbnb-red);
+            color: var(--airbnb-white);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 12px;
+            cursor: pointer;
+        }
+        
+        /* Virtual Tours */
+        .tour-badge {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background-color: var(--airbnb-white);
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        /* Sustainability Badge */
+        .sustainability-badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: var(--airbnb-white);
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header {
+                padding: 16px 20px;
+            }
+            
+            .search-bar {
+                display: none;
+            }
+            
+            .categories {
+                padding: 16px 20px;
+                gap: 24px;
+            }
+            
+            .listings {
+                padding: 20px;
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <svg viewBox="0 0 1000 1000" class="logo">
+            <path fill="currentColor" d="M499.3 736.7c-51-64-81-120.1-91-168.1-10-39-6-70 11-93 18-27 45-40 80-40s62 13 80 40c17 23 21 54 11 93-11 49-41 105-91 168.1zm362.2 43c-7 47-39 86-83 105-85 37-169.1-22-241.1-102 119.1-149.1 141.1-265.1 90-340.2-30-43-73-64-128.1-64-111 0-172.1 94-148.1 203.1 14 59 51 126.1 110 201.1-37 41-72 70-103 88-24 13-47 21-69 23-101 15-180.1-83-144.1-184.1 5-13 15-37 32-74l1-2c55-120.1 122.1-256.1 199.1-407.2l2-5 22-43c17-31 24-45 51-62 13-8 29-12 47-12 36 0 64 21 76 38 6 9 13 21 22 36l21 41 3 6c77 151.1 144.1 287.1 199.1 407.2l1 1 20 46 12 29c9.2 23.1 11.2 46.1 8.2 70.1zm46-90.1c-7-22-19-48-34-79v-1c-71-151.1-137.1-287.1-200.1-409.2l-4-6c-45-92-77-147.1-170.1-147.1-92 0-131.1 64-171.1 147.1l-3 6c-63 122.1-129.1 258.1-200.1 409.2v2l-21 46c-8 19-12 29-13 32-51 140.1 54 263.1 181.1 263.1 1 0 5 0 10-1h14c66-8 134.1-50 203.1-125.1 69 75 137.1 117.1 203.1 125.1h14c5 1 9 1 10 1 127.1.1 232.1-123 181.1-263.1z"></path>
+        </svg>
+        
+        <div class="search-bar">
+            <div class="search-item">Anywhere</div>
+            <div class="search-divider"></div>
+            <div class="search-item">Any week</div>
+            <div class="search-divider"></div>
+            <div class="search-item">Add guests</div>
+            <div class="search-icon">
+                <i class="fas fa-search"></i>
+            </div>
+        </div>
+        
+        <div class="user-menu">
+            <div class="host-button">Become a Host</div>
+            <div class="language-button">
+                <i class="fas fa-globe"></i>
+            </div>
+            <div class="profile-button">
+                <i class="fas fa-bars"></i>
+                <div class="profile-icon">
+                    <i class="fas fa-user"></i>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Categories -->
+    <div class="categories">
+        <div class="category-item active">
+            <div class="category-icon">
+                <i class="fas fa-home"></i>
+            </div>
+            <div class="category-name">Rooms</div>
+        </div>
+        <div class="category-item">
+            <div class="category-icon">
+                <i class="fas fa-umbrella-beach"></i>
+            </div>
+            <div class="category-name">Beach</div>
+        </div>
+        <div class="category-item">
+            <div class="category-icon">
+                <i class="fas fa-mountain"></i>
+            </div>
+            <div class="category-name">Mountain</div>
+        </div>
+        <div class="category-item">
+            <div class="category-icon">
+                <i class="fas fa-water"></i>
+            </div>
+            <div class="category-name">Lakefront</div>
+        </div>
+        <div class="category-item">
+            <div class="category-icon">
+                <i class="fas fa-snowflake"></i>
+            </div>
+            <div class="category-name">Arctic</div>
+        </div>
+        <div class="category-item">
+            <div class="category-icon">
+                <i class="fas fa-campground"></i>
+            </div>
+            <div class="category-name">Camping</div>
+        </div>
+        <div class="category-item">
+            <div class="category-icon">
+                <i class="fas fa-swimming-pool"></i>
+            </div>
+            <div class="category-name">Amazing pools</div>
+        </div>
+        <div class="category-item">
+            <div class="category-icon">
+                <i class="fas fa-igloo"></i>
+            </div>
+            <div class="category-name">Tiny homes</div>
+        </div>
+        <div class="category-item">
+            <div class="category-icon">
+                <i class="fas fa-tree"></i>
+            </div>
+            <div class="category-name">Treehouses</div>
+        </div>
+        <div class="category-item">
+            <div class="category-icon">
+                <i class="fas fa-wine-glass-alt"></i>
+            </div>
+            <div class="category-name">Vineyards</div>
+        </div>
+    </div>
+
+    <!-- Listings -->
+    <div class="listings">
+        <div class="listing-card">
+            <div style="position: relative;">
+                <img src="https://a0.muscache.com/im/pictures/miso/Hosting-53095590/original/4c9e1d4e-2a3a-43b1-9f8f-3d3a5a0f8e3a.jpeg" alt="Modern Apartment" class="listing-image">
+                <div class="tour-badge">
+                    <i class="fas fa-vr-cardboard"></i> Virtual Tour
+                </div>
+                <div class="sustainability-badge">
+                    <i class="fas fa-leaf"></i> Eco-friendly
+                </div>
+            </div>
+            <div class="listing-details">
+                <div>
+                    <div class="listing-title">Modern Apartment in Downtown</div>
+                    <div class="listing-distance">2 miles from center</div>
+                    <div class="listing-dates">Nov 12-17</div>
+                    <div class="listing-price">$120 night</div>
+                </div>
+                <div class="listing-rating">
+                    <i class="fas fa-star star-icon"></i>
+                    <span>4.92</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="listing-card">
+            <div style="position: relative;">
+                <img src="https://a0.muscache.com/im/pictures/miso/Hosting-50235723/original/39c9d4e7-78d0-4807-9f0d-3029d987d02a.jpeg" alt="Beach House" class="listing-image">
+                <div class="sustainability-badge">
+                    <i class="fas fa-leaf"></i> Eco-friendly
+                </div>
+            </div>
+            <div class="listing-details">
+                <div>
+                    <div class="listing-title">Beachfront Villa with Pool</div>
+                    <div class="listing-distance">Direct beach access</div>
+                    <div class="listing-dates">Dec 5-12</div>
+                    <div class="listing-price">$350 night</div>
+                </div>
+                <div class="listing-rating">
+                    <i class="fas fa-star star-icon"></i>
+                    <span>4.85</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="listing-card">
+            <div style="position: relative;">
+                <img src="https://a0.muscache.com/im/pictures/miso/Hosting-46110559/original/39dc0a4b-9a9e-4f70-a9c3-8a5d3f8e0b3a.jpeg" alt="Mountain Cabin" class="listing-image">
+                <div class="tour-badge">
+                    <i class="fas fa-vr-cardboard"></i> Virtual Tour
+                </div>
+            </div>
+            <div class="listing-details">
+                <div>
+                    <div class="listing-title">Cozy Mountain Cabin</div>
+                    <div class="listing-distance">Secluded location</div>
+                    <div class="listing-dates">Jan 10-15</div>
+                    <div class="listing-price">$180 night</div>
+                </div>
+                <div class="listing-rating">
+                    <i class="fas fa-star star-icon"></i>
+                    <span>4.98</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="listing-card">
+            <img src="https://a0.muscache.com/im/pictures/miso/Hosting-52157142/original/13e6a8c1-9e3e-4b6d-8b1e-0e1e9b9b3e3a.jpeg" alt="City Loft" class="listing-image">
+            <div class="listing-details">
+                <div>
+                    <div class="listing-title">Stylish City Loft</div>
+                    <div class="listing-distance">Heart of the city</div>
+                    <div class="listing-dates">Nov 20-25</div>
+                    <div class="listing-price">$150 night</div>
+                </div>
+                <div class="listing-rating">
+                    <i class="fas fa-star star-icon"></i>
+                    <span>4.79</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="listing-card">
+            <div style="position: relative;">
+                <img src="https://a0.muscache.com/im/pictures/miso/Hosting-52716146/original/3f5e3e3e-3e3e-3e3e-3e3e-3e3e3e3e3e3e.jpeg" alt="Lake House" class="listing-image">
+                <div class="sustainability-badge">
+                    <i class="fas fa-leaf"></i> Eco-friendly
+                </div>
+            </div>
+            <div class="listing-details">
+                <div>
+                    <div class="listing-title">Lakefront Cottage</div>
+                    <div class="listing-distance">Private dock</div>
+                    <div class="listing-dates">Jun 1-8</div>
+                    <div class="listing-price">$220 night</div>
+                </div>
+                <div class="listing-rating">
+                    <i class="fas fa-star star-icon"></i>
+                    <span>4.91</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="listing-card">
+            <img src="https://a0.muscache.com/im/pictures/miso/Hosting-52716146/original/3f5e3e3e-3e3e-3e3e-3e3e-3e3e3e3e3e3e.jpeg" alt="Countryside Villa" class="listing-image">
+            <div class="listing-details">
+                <div>
+                    <div class="listing-title">Countryside Villa</div>
+                    <div class="listing-distance">Vineyard views</div>
+                    <div class="listing-dates">Sep 15-22</div>
+                    <div class="listing-price">$275 night</div>
+                </div>
+                <div class="listing-rating">
+                    <i class="fas fa-star star-icon"></i>
+                    <span>4.87</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Travel Planner -->
+    <div class="planner-button" id="planner-button">
+        <i class="fas fa-robot"></i>
+    </div>
+
+    <!-- AI Planner Modal -->
+    <div class="planner-modal" id="planner-modal">
+        <div class="planner-container">
+            <div class="planner-header">
+                <div class="planner-title">AI Travel Planner</div>
+                <div class="planner-close" id="planner-close">&times;</div>
+            </div>
+            <div class="planner-content" id="planner-content">
+                <div class="planner-message">
+                    Hi! I'm your AI travel assistant. Where would you like to go?
+                </div>
+                <div class="planner-message user">
+                    I'm looking for a beach vacation in December
+                </div>
+                <div class="planner-message">
+                    Great choice! Here are some perfect beach destinations for December:
+                    <br><br>
+                    1. Bali, Indonesia - Warm weather, beautiful beaches (avg. 82°F)
+                    <br>
+                    2. Cancun, Mexico - Crystal clear waters (avg. 80°F)
+                    <br>
+                    3. Phuket, Thailand - Tropical paradise (avg. 86°F)
+                    <br><br>
+                    Would you like me to show you specific listings in any of these locations?
+                </div>
+            </div>
+            <div class="planner-input">
+                <input type="text" class="planner-input-field" placeholder="Ask me anything about your trip...">
+                <div class="planner-send">
+                    <i class="fas fa-paper-plane"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Category selection
+        const categoryItems = document.querySelectorAll('.category-item');
+        
+        categoryItems.forEach(item => {
+            item.addEventListener('click', function() {
+                categoryItems.forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+        
+        // AI Planner Modal
+        const plannerButton = document.getElementById('planner-button');
+        const plannerModal = document.getElementById('planner-modal');
+        const plannerClose = document.getElementById('planner-close');
+        
+        plannerButton.addEventListener('click', function() {
+            plannerModal.style.display = 'flex';
+        });
+        
+        plannerClose.addEventListener('click', function() {
+            plannerModal.style.display = 'none';
+        });
+        
+        // Close modal when clicking outside
+        window.addEventListener('click', function(event) {
+            if (event.target === plannerModal) {
+                plannerModal.style.display = 'none';
+            }
+        });
+        
+        // Simulate AI conversation
+        const plannerSend = document.querySelector('.planner-send');
+        const plannerInput = document.querySelector('.planner-input-field');
+        const plannerContent = document.getElementById('planner-content');
+        
+        plannerSend.addEventListener('click', function() {
+            if (plannerInput.value.trim() !== '') {
+                // Add user message
+                const userMessage = document.createElement('div');
+                userMessage.className = 'planner-message user';
+                userMessage.textContent = plannerInput.value;
+                plannerContent.appendChild(userMessage);
+                
+                // Simulate AI response
+                setTimeout(() => {
+                    const aiMessage = document.createElement('div');
+                    aiMessage.className = 'planner-message';
+                    
+                    if (plannerInput.value.toLowerCase().includes('beach')) {
+                        aiMessage.innerHTML = 'For beach destinations, I recommend:<br><br>' +
+                            '• Maldives - Perfect white sand beaches<br>' +
+                            '• Hawaii - Great for surfing and relaxation<br>' +
+                            '• Seychelles - Pristine and private<br><br>' +
+                            'Would you like me to show listings in any of these?';
+                    } else if (plannerInput.value.toLowerCase().includes('mountain')) {
+                        aiMessage.innerHTML = 'For mountain getaways, consider:<br><br>' +
+                            '• Swiss Alps - Beautiful ski resorts<br>' +
+                            '• Rocky Mountains - Great for hiking<br>' +
+                            '• Himalayas - For adventurous travelers<br><br>' +
+                            'Should I find specific cabins or lodges?';
+                    } else {
+                        aiMessage.textContent = 'I can help you find the perfect accommodation. Can you tell me more about what you\'re looking for? (e.g., location, dates, budget)';
+                    }
+                    
+                    plannerContent.appendChild(aiMessage);
+                    plannerContent.scrollTop = plannerContent.scrollHeight;
+                }, 1000);
+                
+                plannerInput.value = '';
+                plannerContent.scrollTop = plannerContent.scrollHeight;
+            }
+        });
+        
+        // Allow pressing Enter to send message
+        plannerInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                plannerSend.click();
+            }
+        });
+    </script>
+</body>
+</html>
